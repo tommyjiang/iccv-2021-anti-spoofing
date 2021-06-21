@@ -1,0 +1,77 @@
+MODEL:
+  PRETRAIN_CHOICE: 'random_init'
+  PRETRAIN_PATH: './pretrained_model/resnet50-19c8e357.pth'
+  LAST_STRIDE: 2
+  NECK: 'no'
+  METRIC_LOSS_TYPE: 'softmax'
+  IF_LABELSMOOTH: 'off'
+  IF_WITH_CENTER: 'no'
+  NAME: 'ccl'
+  ENCODER: 'se_resnext101' # se_resnext101
+  ARCH: 'b5' # b5 b7
+  # DEVICE_ID: "2"
+
+
+INPUT:
+  SIZE_TRAIN: [333, 333]
+  TARGET_TRAIN: [256, 256]
+  SIZE_TEST: [256, 256]
+  PROB: 0.5 # random horizontal flip
+  PADDING: 10
+
+DATASETS:
+  NAMES: ('self_anti')
+  # ROOT_DIR: "../extra_data/pts_v2"
+  ROOT_DIR: "../raw_data/phase1"
+
+DATALOADER:
+  SAMPLER: 'softmax'
+  NUM_INSTANCE: 4
+  NUM_WORKERS: 16
+  TRANSFORMS: 'albu'
+
+SOLVER:
+  OPTIMIZER_NAME: 'Ranger'
+  MAX_EPOCHS: 70 #[20]
+  BASE_LR: 0.001 # 0.0001
+
+  # CLUSTER_MARGIN: 0.3
+
+  # CENTER_LR: 0.5
+  # CENTER_LOSS_WEIGHT: 0.0005
+
+  # RANGE_K: 2
+  # RANGE_MARGIN: 0.3
+  # RANGE_ALPHA: 0
+  # RANGE_BETA: 1
+  # RANGE_LOSS_WEIGHT: 1
+
+  BIAS_LR_FACTOR: 128
+  WEIGHT_DECAY: 0.0005
+  WEIGHT_DECAY_BIAS: 0.0005
+  IMS_PER_BATCH: 64
+
+  # stepLR的一些参数
+  STEPS: [20, 30, 60] # [20,30]
+  GAMMA: 0.1
+
+  WARMUP_FACTOR: 0.01
+  WARMUP_ITERS: 5
+  WARMUP_METHOD: 'linear'
+
+  CHECKPOINT_PERIOD: 5
+  LOG_PERIOD: 20
+  EVAL_PERIOD: 4
+
+  PESUDO_UPDATE_PERIOD: 2
+  PESUDO_SKIP: 5
+
+TEST:
+  IMS_PER_BATCH: 256
+  RE_RANKING: 'no'
+  WEIGHT: "../logs/ccl_se_next101_3_class_sample6_mse1_0.001_pesudo_update/model_best.pth"
+  NECK_FEAT: 'after'
+  FEAT_NORM: 'yes'
+
+OUTPUT_DIR: "../logs/ccl_b5_3_class_sample6_mse1_0.001_pesudo_update/test"
+
