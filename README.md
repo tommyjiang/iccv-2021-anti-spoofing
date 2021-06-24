@@ -42,22 +42,13 @@ python3 train_ccl.py --config_file="configs/ccl_mask.yml"
 python3 test_TTA.py --config_file="configs/ccl_mask.yml"
 得到标签为temp_res_test.txt
 
-```
-# 半监督方法增强结果
-```shell
-修改./anti_code/data/build.py 中第108行data_scores为此前生成的初始伪标签
-进而调用半监督训练代码
-python3 train_ccl_pesudo_update.py --config_file="configs/ccl_mask_pesudo_update.yml"  
-取其第35epoch作为输出结果 ，第二次lr decay后5epoch，可以直接取过程中产出的结果文件 ../logs/xxxx/pesudo_ckpt/pesudo_scores_34.txt
-
-```
 # 后处理
 
 ```shell
 调用后处理程序完成结果平滑
 cd ./post_process
 python3 post_process.py
-运行前，需要更改代码中的读取路径以及结果生成路径。结果即为最终的推理结果。
+运行前，需要更改代码中的读取路径(需要改为训练模型 TTA 预测的结果)以及结果生成路径。结果即为最终的推理结果。
 考虑到valid和test上存在分布偏差，为EER求出的阈值过偏，导致结果偏移严重，因此直接采取0.5-0.7之间的数值作为阈值。根据此前train_ccl产生的最佳模型在validset上产生的结果及赛方提供的valid标签，计算最佳阈值点，并划分出真假结果。随后将neg设为thred-0.1，pos设为thred+0.1，作为前置结果合并提交
 
 ```
