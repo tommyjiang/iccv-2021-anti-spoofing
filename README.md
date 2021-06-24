@@ -36,6 +36,7 @@ cd extra_data
 tar -xvf pts_v2.tar
 cd ../anti_code
 python3 train_ccl.py --config_file="configs/ccl_mask.yml"
+```
 获取最佳valid的结果，以及模型文件model_1
 
 使用该模型预测二阶段数据，获取初始伪标签
@@ -48,7 +49,6 @@ python3 test_TTA.py --config_file="configs/ccl_mask.yml"
 调用后处理程序完成结果平滑
 cd ./post_process
 python3 post_process.py
+```
 运行前，需要更改代码中的读取路径(需要改为训练模型 TTA 预测的结果)以及结果生成路径。结果即为最终的推理结果。
 考虑到valid和test上存在分布偏差，为EER求出的阈值过偏，导致结果偏移严重，因此直接采取0.5-0.7之间的数值作为阈值。根据此前train_ccl产生的最佳模型在validset上产生的结果及赛方提供的valid标签，计算最佳阈值点，并划分出真假结果。随后将neg设为thred-0.1，pos设为thred+0.1，作为前置结果合并提交
-
-```
